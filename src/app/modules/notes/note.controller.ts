@@ -35,6 +35,8 @@ const getSingleNote = catchAsync(async (req: Request, res: Response) => {
   const decodedToken = req.user as JwtPayload;
   const note = await NoteServices.getSingleNote(req.params.id, decodedToken);
 
+  console.log("Retrieved note:", note, decodedToken); // Debugging log
+
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,

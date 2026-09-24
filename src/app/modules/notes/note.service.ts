@@ -4,6 +4,29 @@ import { QueryBuilder } from "../../utils/QueryBuilder";
 import { INote } from "./note.interface";
 import { Note } from "./note.model";
 
+const isOwnerMatch = (owner: unknown, userId: string) => {
+  if (!owner) {
+    return false;
+  }
+
+  if (typeof owner === "string") {
+    return owner === userId;
+  }
+
+  if (typeof owner === "object") {
+    const ownerObj = owner as { _id?: { toString: () => string } | string; toString?: () => string };
+    if (ownerObj._id) {
+      return ownerObj._id.toString() === userId;
+    }
+
+    if (typeof ownerObj.toString === "function") {
+      return ownerObj.toString() === userId;
+    }
+  }
+
+  return false;
+};
+
 const createNote = async (payload: Partial<INote>, userId: string) => {
   const note = await Note.create({
     ...payload,
@@ -35,12 +58,12 @@ const getAllNotes = async (query: Record<string, string>, decodedToken: JwtPaylo
 
 const getSingleNote = async (noteId: string, decodedToken: JwtPayload) => {
   const note = await Note.findById(noteId).populate("owner", "-password");
-
+console.log("Note found:", note); // Debugging log
   if (!note) {
     throw new Error("Note not found");
   }
 
-  if (decodedToken.role === "USER" && (note.owner as any).toString() !== decodedToken.userId) {
+  if (decodedToken.role === "USER" && !isOwnerMatch(note.owner, decodedToken.userId)) {
     throw new Error("You are not authorized to view this note");
   }
 
@@ -54,7 +77,7 @@ const updateNote = async (noteId: string, payload: Partial<INote>, decodedToken:
     throw new Error("Note not found");
   }
 
-  if (decodedToken.role === "USER" && note.owner.toString() !== decodedToken.userId) {
+  if (decodedToken.role === "USER" && !isOwnerMatch(note.owner, decodedToken.userId)) {
     throw new Error("You are not authorized to update this note");
   }
 
@@ -73,7 +96,7 @@ const deleteNote = async (noteId: string, decodedToken: JwtPayload) => {
     throw new Error("Note not found");
   }
 
-  if (decodedToken.role === "USER" && note.owner.toString() !== decodedToken.userId) {
+  if (decodedToken.role === "USER" && !isOwnerMatch(note.owner, decodedToken.userId)) {
     throw new Error("You are not authorized to delete this note");
   }
 

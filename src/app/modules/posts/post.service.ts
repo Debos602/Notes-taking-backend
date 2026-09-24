@@ -10,22 +10,8 @@ const createPost = async (payload: Partial<IPost>, userId: string) => {
   return post;
 };
 
-const getAllPosts = async (query: Record<string, string>) => {
-  const queryBuilder = new QueryBuilder(
-    Post.find().populate("author", "-password"),
-    query
-  );
-  const postsQuery = queryBuilder.sort().paginate();
 
-  const [data, meta] = await Promise.all([postsQuery.build(), queryBuilder.getMeta()]);
-
-  return {
-    data,
-    meta,
-  };
-};
 
 export const PostServices = {
   createPost,
-  getAllPosts,
 };

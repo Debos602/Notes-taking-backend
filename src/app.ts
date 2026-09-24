@@ -1,3 +1,4 @@
+import cookieParser from "cookie-parser";
 import cors from "cors";
 import express, { Request, Response } from "express";
 import { envVars } from "./app/config/env";
@@ -9,12 +10,17 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 app.use(
   cors({
     origin: envVars.FRONTEND_URL,
     credentials: true,
   })
 );
+
+app.get("/favicon.ico", (_req, res) => {
+  res.status(204).end();
+});
 
 app.get("/", (req: Request, res: Response) => {
   res.status(200).json({
@@ -24,7 +30,7 @@ app.get("/", (req: Request, res: Response) => {
 
 app.use("/api/v1", router);
 
-app.use(globalErrorHandler);
 app.use(notFound);
+app.use(globalErrorHandler);
 
 export default app;

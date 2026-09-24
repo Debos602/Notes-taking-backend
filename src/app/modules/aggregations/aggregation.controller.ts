@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Request, Response } from "express";
+import { JwtPayload } from "jsonwebtoken";
 import { Types } from "mongoose";
 import httpStatus from "http-status-codes";
+import AppError from "../../errorHelpers/AppError";
 import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
 import { User } from "../user/user.model";
@@ -39,6 +41,11 @@ const groupUsersByInterest = catchAsync(async (req: Request, res: Response) => {
 
 const getUserPosts = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
+  const decodedToken = req.user as JwtPayload;
+
+  if (decodedToken.role === "USER" && decodedToken.userId !== id) {
+    throw new AppError(httpStatus.FORBIDDEN, "You are not allowed to view other user's posts");
+  }
 
   const userWithPosts = await User.aggregate([
     { $match: { _id: new Types.ObjectId(id) } },

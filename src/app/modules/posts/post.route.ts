@@ -10,7 +10,6 @@ const router = Router();
 router.use(checkAuth(Role.ADMIN, Role.USER));
 
 router.route("/")
-  .get(PostControllers.getAllPosts)
   .post(validateRequest(createPostZodSchema), PostControllers.createPost);
 
 export const PostRoutes = router;

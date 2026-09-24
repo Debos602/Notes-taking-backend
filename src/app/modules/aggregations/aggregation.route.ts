@@ -5,9 +5,7 @@ import { AggregationControllers } from "./aggregation.controller";
 
 const router = Router();
 
-router.use(checkAuth(Role.ADMIN));
-
-router.get("/users/grouped-by-interest", AggregationControllers.groupUsersByInterest);
-router.get("/posts/user/:id", AggregationControllers.getUserPosts);
+router.get("/users/grouped-by-interest", checkAuth(Role.ADMIN), AggregationControllers.groupUsersByInterest);
+router.get("/posts/user/:id", checkAuth(Role.USER, Role.ADMIN), AggregationControllers.getUserPosts);
 
 export const AggregationRoutes = router;
