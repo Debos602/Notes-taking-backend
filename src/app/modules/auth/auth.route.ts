@@ -8,5 +8,6 @@ const router = Router();
 router.post("/register", validateRequest(registerZodSchema), AuthControllers.register);
 router.post("/login", validateRequest(loginZodSchema), AuthControllers.login);
 router.post("/refresh", AuthControllers.refresh);
+router.post("/logout", AuthControllers.logout);
 
 export const AuthRoutes = router;

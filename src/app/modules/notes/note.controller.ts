@@ -31,6 +31,20 @@ const getAllNotes = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getMyNotes = catchAsync(async (req: Request, res: Response) => {
+  const decodedToken = req.user as JwtPayload;
+  const query = req.query as Record<string, string>;
+  const result = await NoteServices.getMyNotes(query, decodedToken.userId);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Your notes retrieved successfully",
+    data: result.data,
+    meta: result.meta,
+  });
+});
+
 const getSingleNote = catchAsync(async (req: Request, res: Response) => {
   const decodedToken = req.user as JwtPayload;
   const note = await NoteServices.getSingleNote(req.params.id, decodedToken);
@@ -72,6 +86,7 @@ const deleteNote = catchAsync(async (req: Request, res: Response) => {
 export const NoteControllers = {
   createNote,
   getAllNotes,
+  getMyNotes,
   getSingleNote,
   updateNote,
   deleteNote,

@@ -10,6 +10,6 @@ const postSchema = new Schema<IPost>(
   { timestamps: true, versionKey: false }
 );
 
-postSchema.index({ author: 1 });
+postSchema.index({ author: 1, createdAt: -1 });
 
 export const Post = model<IPost>("Post", postSchema);

@@ -48,6 +48,19 @@ const setAuthCookies = (res: Response, accessToken: string, refreshToken?: strin
   }
 };
 
+const clearAuthCookies = (res: Response) => {
+  const isProduction = envVars.NODE_ENV === "production";
+  const cookieOptions = {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: isProduction ? ("none" as const) : ("lax" as const),
+    path: "/",
+  };
+
+  res.clearCookie("accessToken", cookieOptions);
+  res.clearCookie("refreshToken", cookieOptions);
+};
+
 const register = catchAsync(async (req: Request, res: Response) => {
   const result = await AuthServices.register(req.body);
 
@@ -97,8 +110,20 @@ const refresh = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const logout = catchAsync(async (_req: Request, res: Response) => {
+  clearAuthCookies(res);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "User logged out successfully",
+    data: null,
+  });
+});
+
 export const AuthControllers = {
   register,
   login,
   refresh,
+  logout,
 };

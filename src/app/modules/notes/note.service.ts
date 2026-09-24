@@ -56,6 +56,21 @@ const getAllNotes = async (query: Record<string, string>, decodedToken: JwtPaylo
   };
 };
 
+const getMyNotes = async (query: Record<string, string>, userId: string) => {
+  const queryBuilder = new QueryBuilder(
+    Note.find({ owner: userId }).populate("owner", "-password"),
+    query
+  );
+  const notesQuery = queryBuilder.sort().paginate();
+
+  const [data, meta] = await Promise.all([notesQuery.build(), queryBuilder.getMeta()]);
+
+  return {
+    data,
+    meta,
+  };
+};
+
 const getSingleNote = async (noteId: string, decodedToken: JwtPayload) => {
   const note = await Note.findById(noteId).populate("owner", "-password");
 console.log("Note found:", note); // Debugging log
@@ -107,6 +122,7 @@ const deleteNote = async (noteId: string, decodedToken: JwtPayload) => {
 export const NoteServices = {
   createNote,
   getAllNotes,
+  getMyNotes,
   getSingleNote,
   updateNote,
   deleteNote,

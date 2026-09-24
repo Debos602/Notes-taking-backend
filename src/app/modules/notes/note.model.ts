@@ -11,5 +11,6 @@ const noteSchema = new Schema<INote>(
 );
 
 noteSchema.index({ owner: 1, createdAt: -1 });
+noteSchema.index({ createdAt: -1 });
 
 export const Note = model<INote>("Note", noteSchema);

@@ -13,6 +13,8 @@ router.route("/")
   .get(NoteControllers.getAllNotes)
   .post(validateRequest(createNoteZodSchema), NoteControllers.createNote);
 
+router.get("/my-notes", NoteControllers.getMyNotes);
+
 router.route("/:id")
   .get(NoteControllers.getSingleNote)
   .patch(validateRequest(updateNoteZodSchema), NoteControllers.updateNote)
