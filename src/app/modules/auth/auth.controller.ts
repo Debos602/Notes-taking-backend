@@ -71,7 +71,8 @@ const register = catchAsync(async (req: Request, res: Response) => {
     statusCode: httpStatus.CREATED,
     message: "User registered successfully",
     data: {
-      user: result.user
+      user: result.user,
+       accessToken: result.accessToken
     },
   });
 });
@@ -86,7 +87,8 @@ const login = catchAsync(async (req: Request, res: Response) => {
     statusCode: httpStatus.OK,
     message: "User logged in successfully",
     data: {
-      user: result.user
+      user: result.user,
+       accessToken: result.accessToken
     },
   });
 });
