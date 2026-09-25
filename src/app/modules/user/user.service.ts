@@ -1,10 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars */
 import bcryptjs from "bcryptjs";
+import httpStatus from "http-status-codes";
 import { envVars } from "../../config/env";
+import AppError from "../../errorHelpers/AppError";
 import { QueryBuilder } from "../../utils/QueryBuilder";
 import { userSearchableFields } from "./user.constant";
 import { IUser, Role } from "./user.interface";
 import { User } from "./user.model";
+
+const isValidUserId = (id?: string) => !!id && /^[0-9a-fA-F]{24}$/.test(id);
 
 const createUser = async (payload: Partial<IUser>) => {
   const { email, password, ...rest } = payload;
@@ -40,6 +44,10 @@ const getAllUsers = async (query: Record<string, string>) => {
 };
 
 const getSingleUser = async (id: string) => {
+  if (!isValidUserId(id)) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Invalid user id");
+  }
+
   const user = await User.findById(id).select("-password");
   if (!user) {
     throw new Error("User not found");
@@ -48,6 +56,10 @@ const getSingleUser = async (id: string) => {
 };
 
 const getMe = async (userId: string) => {
+  if (!isValidUserId(userId)) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Invalid user id");
+  }
+
   const user = await User.findById(userId).select("-password");
   if (!user) {
     throw new Error("User not found");
@@ -56,6 +68,10 @@ const getMe = async (userId: string) => {
 };
 
 const updateUser = async (userId: string, payload: Partial<IUser>) => {
+  if (!isValidUserId(userId)) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Invalid user id");
+  }
+
   const { password, ...userData } = payload;
   const updateData = password
     ? {
@@ -77,6 +93,10 @@ const updateUser = async (userId: string, payload: Partial<IUser>) => {
 };
 
 const deleteUser = async (id: string) => {
+  if (!isValidUserId(id)) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Invalid user id");
+  }
+
   const user = await User.findByIdAndDelete(id);
   if (!user) {
     throw new Error("User not found");
