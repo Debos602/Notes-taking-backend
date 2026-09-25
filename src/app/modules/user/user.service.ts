@@ -56,7 +56,15 @@ const getMe = async (userId: string) => {
 };
 
 const updateUser = async (userId: string, payload: Partial<IUser>) => {
-  const user = await User.findByIdAndUpdate(userId, payload, {
+  const { password, ...userData } = payload;
+  const updateData = password
+    ? {
+        ...userData,
+        password: await bcryptjs.hash(password, Number(envVars.BCRYPT_SALT_ROUND)),
+      }
+    : userData;
+
+  const user = await User.findByIdAndUpdate(userId, updateData, {
     new: true,
     runValidators: true,
   }).select("-password");

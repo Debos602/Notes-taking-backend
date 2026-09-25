@@ -30,6 +30,14 @@ export const updateUserZodSchema = z.object({
     .string({ invalid_type_error: "Email must be a string" })
     .email({ message: "Invalid email address format." })
     .optional(),
+  password: z
+    .string({ invalid_type_error: "Password must be a string" })
+    .min(8, { message: "Password must be at least 8 characters long." })
+    .regex(/[A-Z]/, { message: "Password must contain at least 1 uppercase letter." })
+    .regex(/[a-z]/, { message: "Password must contain at least 1 lowercase letter." })
+    .regex(/\d/, { message: "Password must contain at least 1 number." })
+    .regex(/[^A-Za-z0-9]/, { message: "Password must contain at least 1 special character." })
+    .optional(),
   role: z.enum(Object.values(Role) as [string]).optional(),
   interests: z.array(z.string()).optional(),
 });

@@ -391,6 +391,38 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "Update User Password (Admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"password\": \"NewStrongPass1!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/{{userId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{userId}}"
+              ]
+            }
+          },
+          "response": []
         }
       ]
     },
@@ -628,6 +660,25 @@
     {
       "name": "Aggregations",
       "item": [
+        {
+          "name": "Get My Stats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/aggregations/user/stats",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "aggregations",
+                "user",
+                "stats"
+              ]
+            }
+          },
+          "response": []
+        },
         {
           "name": "Users Grouped By Interest",
           "request": {
