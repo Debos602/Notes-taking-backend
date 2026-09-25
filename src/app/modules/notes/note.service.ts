@@ -73,7 +73,7 @@ const getMyNotes = async (query: Record<string, string>, userId: string) => {
 
 const getSingleNote = async (noteId: string, decodedToken: JwtPayload) => {
   const note = await Note.findById(noteId).populate("owner", "-password");
-console.log("Note found:", note); // Debugging log
+
   if (!note) {
     throw new Error("Note not found");
   }
